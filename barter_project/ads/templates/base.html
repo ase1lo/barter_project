@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Платформа обмена вещами{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+<body>
+    <header>
+        <h1><a href="/">Обмен вещами</a></h1>
+        <nav>
+            <a href="{% url 'create_ad' %}">Добавить объявление</a> |
+            <a href="/admin/">Админка</a>
+        </nav>
+        <hr>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Сюда подставляется контент из дочерних шаблонов -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <hr>
+        <p>&copy; 2025 — Платформа обмена вещами</p>
+    </footer>
+</body>
+</html>
