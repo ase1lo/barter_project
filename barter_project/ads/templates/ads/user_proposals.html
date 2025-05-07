@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Мои предложения обмена</h2>
+
+  <div>
+    <a href="{% url 'user_proposals' %}?type=all">Все</a> |
+    <a href="{% url 'user_proposals' %}?type=sent">Отправленные</a> |
+    <a href="{% url 'user_proposals' %}?type=received">Полученные</a> |
+  </div>
+
+  {% if proposals %}
+    <ul>
+      {% for proposal in proposals %}
+        <li>
+          <strong>{{ proposal.ad_sender.title }}</strong> → <strong>{{ proposal.ad_receiver.title }}</strong><br>
+          Статус: {{ proposal.get_status_display }}<br>
+          Комментарий: {{ proposal.comment }}<br>
+          Дата: {{ proposal.created_at }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Предложений обмена пока нет.</p>
+  {% endif %}
+{% endblock %}

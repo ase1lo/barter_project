@@ -2,17 +2,27 @@
 {% block content %}
   <h2>Объявления</h2>
 
-  <ul>
-    {% for ad in ads %}
-      <li>
-        <strong>{{ ad.title }} {{ ad.created_at }}</strong> — {{ ad.condition }} <br>
-        {% if request.user == ad.user %}
-        <a href="{% url 'update_ad' ad.id %}">Редактировать</a> |
-        <a href="{% url 'delete_ad' ad.id %}">Удалить</a>
-        {% endif %}
-      </li>
-    {% empty %}
-      <li>Объявлений пока нет.</li>
-    {% endfor %}
-  </ul>
+  {% for ad in ads %}
+  <li>
+    <strong>{{ ad.title }} {{ ad.created_at }}</strong> — {{ ad.condition }} <br>
+
+    {% if ad.user != request.user and user_ads %}
+      <form method="get" action="{% url 'create_proposal' %}">
+        <input type="hidden" name="ad_receiver" value="{{ ad.id }}">
+        <label for="ad_sender">Выбери своё объявление для обмена:</label>
+        <select name="ad_sender">
+          {% for ua in user_ads %}
+            <option value="{{ ua.id }}">{{ ua.title }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Предложить обмен</button>
+      </form>
+    {% endif %}
+
+    {% if request.user == ad.user %}
+      <a href="{% url 'update_ad' ad.id %}">Редактировать</a> |
+      <a href="{% url 'delete_ad' ad.id %}">Удалить</a>
+    {% endif %}
+  </li>
+{% endfor %}
 {% endblock %}
