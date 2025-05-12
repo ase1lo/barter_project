@@ -16,6 +16,11 @@
           Статус: {{ proposal.get_status_display }}<br>
           Комментарий: {{ proposal.comment }}<br>
           Дата: {{ proposal.created_at }}
+
+          {% if proposal.ad_receiver.user == request.user and proposal.status == 'pending' %}
+            <a href="{% url 'accept_proposal' proposal.id %}">Принять</a> |
+            <a href="{% url 'decline_proposal' proposal.id %}">Отклонить</a>
+            {% endif %}
         </li>
       {% endfor %}
     </ul>

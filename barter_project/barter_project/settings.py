@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ads',
     'rest_framework',
+    'accounts'
 ]
 
 MIDDLEWARE = [
@@ -118,7 +119,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'ads_list'
+LOGOUT_REDIRECT_URL = 'ads_list'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import AdForm, ExchangeProposalForm
 from django.contrib.auth.decorators import login_required
 from .models import Ad, ExchangeProposal
+from django.http import HttpResponseForbidden
 
 
 
@@ -12,7 +13,10 @@ def home(request):
 
 def ads_list(request):
     ads = Ad.objects.all().order_by('-created_at')
-    user_ads = Ad.objects.filter(user=request.user)
+    if request.user.is_authenticated:
+        user_ads = Ad.objects.filter(user=request.user)
+    else:
+        user_ads = None
     return render(request, 'ads/ads_list.html', {'ads': ads, 'user_ads': user_ads})
 
 @login_required
@@ -102,3 +106,26 @@ def user_proposals(request):
         proposals = list(sent) + list(received)
 
     return render(request, 'ads/user_proposals.html', {'proposals': proposals, 'view_type': view_type})
+
+@login_required
+def accept_proposal(request, proposal_id):
+    proposal = get_object_or_404(ExchangeProposal, id=proposal_id)
+
+    if proposal.ad_receiver.user != request.user:
+        return HttpResponseForbidden
+    
+    proposal.status = 'accepted'
+    proposal.save()
+    return redirect('user_proposals')
+
+@login_required
+def decline_proposal(request, proposal_id):
+    proposal = get_object_or_404(ExchangeProposal, id=proposal_id)
+
+    if proposal.ad_receiver.user != request.user:
+        return HttpResponseForbidden
+    
+    proposal.status = 'declined'
+    proposal.save()
+    return redirect('user_proposals')
+
