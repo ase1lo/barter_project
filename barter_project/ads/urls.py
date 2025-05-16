@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.ads_list, name='ads_list'),
@@ -11,4 +13,4 @@ urlpatterns = [
     path('proposals/', views.user_proposals, name='user_proposals'),
     path('proposals/<int:proposal_id>/accept', views.accept_proposal, name='accept_proposal'),
     path('proposals/<int:proposal_id>/decline', views.decline_proposal, name='decline_proposal'),
-]
+] 

@@ -14,6 +14,7 @@ class Ad(models.Model):
     category = models.CharField(max_length=60)
     condition = models.CharField(max_length=10, choices=CONDITION_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='ad_images/', blank=True, null=True)
     
     def __str__(self):
         return f"{self.title} ({self.user.username})"

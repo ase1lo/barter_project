@@ -1,30 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
   <h2>Объявления</h2>
+  <form method="get" action="{% url 'ads_list' %}">
+  <input type="text" name="q" placeholder="Поиск по названию" value="{{ query }}">
+  <button type="submit">Найти</button>
+  </form>
 
-  {% for ad in ads %}
-  <li>
-    <strong>{{ ad.title }} {{ ad.created_at }}</strong> — {{ ad.condition }} <br>
+  
+<div class="container mt-4">
+  <div class="row">
+    {% for ad in ads %}
+      <div class="col-md-4">
+        <div class="card mb-4">
+          {% if ad.image %}
+            <img src="{{ ad.image.url }}" class="card-img-top" alt="{{ ad.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ ad.title }}</h5>
+            <p class="card-text">{{ ad.description|truncatechars:100 }}</p>
+            <p><strong>Состояние:</strong> {{ ad.condition }}</p>
 
-    {% if user.is_authenticated %}
-    {% if ad.user != request.user and user_ads %}
-    <form method="get" action="{% url 'create_proposal' %}">
-      <input type="hidden" name="ad_receiver" value="{{ ad.id }}">
-      <label for="ad_sender">Выбери своё объявление для обмена:</label>
-      <select name="ad_sender">
-        {% for ua in user_ads %}
-          <option value="{{ ua.id }}">{{ ua.title }}</option>
-        {% endfor %}
-      </select>
-      <button type="submit">Предложить обмен</button>
-    </form>
-    {% endif %}
+            {% if user.is_authenticated and ad.user != user and user_ads %}
+              <form method="get" action="{% url 'create_proposal' %}">
+                <input type="hidden" name="ad_receiver" value="{{ ad.id }}">
+                <select name="ad_sender" class="form-select mb-2">
+                  {% for ua in user_ads %}
+                    <option value="{{ ua.id }}">{{ ua.title }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Предложить обмен</button>
+              </form>
+            {% endif %}
 
-    {% if request.user == ad.user %}
-    <a href="{% url 'update_ad' ad.id %}">Редактировать</a> |
-    <a href="{% url 'delete_ad' ad.id %}">Удалить</a>
-    {% endif %}
-    {% endif %}
-  </li>
-{% endfor %}
+            {% if user == ad.user %}
+              <a href="{% url 'update_ad' ad.id %}" class="btn btn-secondary">Редактировать</a>
+              <a href="{% url 'delete_ad' ad.id %}" class="btn btn-danger">Удалить</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Объявлений пока нет.</p>
+    {% endfor %}
+  </div>
+</div>
+
 {% endblock %}
+

@@ -12,17 +12,23 @@ def home(request):
     return render(request, 'ads/home.html')
 
 def ads_list(request):
-    ads = Ad.objects.all().order_by('-created_at')
+    query = request.GET.get('q')
+    if query:
+        ads = Ad.objects.filter(title__icontains=query)
+    else:
+        ads = Ad.objects.all().order_by('-created_at')
+
+
     if request.user.is_authenticated:
         user_ads = Ad.objects.filter(user=request.user)
     else:
         user_ads = None
-    return render(request, 'ads/ads_list.html', {'ads': ads, 'user_ads': user_ads})
+    return render(request, 'ads/ads_list.html', {'ads': ads, 'user_ads': user_ads, 'query': query})
 
 @login_required
 def create_ad(request):
     if request.method == 'POST':
-        form = AdForm(request.POST)
+        form = AdForm(request.POST, request.FILES)
         if form.is_valid():
             ad = form.save(commit=False)
             ad.user = request.user
